@@ -1,0 +1,27 @@
+body{
+    background-image: linear-gradient(to right, #0000FF, #000080);
+}
+
+.container {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: rgb(255, 255, 255);
+    width: 400px;
+    height: 200px;
+    border-radius: 10px;
+    display: block;
+    flex-wrap: wrap;
+    text-align: center;
+    padding: 10px;
+    font-size: xx-large;
+}
+
+.result {
+    position: relative;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
