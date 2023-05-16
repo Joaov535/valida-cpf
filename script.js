@@ -1,42 +1,54 @@
-const result = document.querySelector('.result'); // aparece o resultado no html
-const button = document.querySelector('button');
+// Modularizando
+
+let result = document.querySelector('.result'); // aparece o resultado no html
+let button = document.querySelector('button');
+
+function ValidaCPF(cpfEnviado) {
+    Object.defineProperty(this, 'cpfLimpo', {
+        enumerable: true,
+        get: function () {
+            return cpfEnviado.replace(/\D+/g, '')
+        }
+    });
+}
+
+ValidaCPF.prototype.valida = function () {
+    if (typeof this.cpfLimpo == 'undefined') return false;
+    if(this.cpfLimpo.length !== 11) return false;
+    
+    let cpfParcial = this.cpfLimpo.slice(0, -2);
+    let dig1 = this.criaDigito(cpfParcial);
+    let dig2 = this.criaDigito(cpfParcial + dig1);
+    let cpfGerado = cpfParcial + dig1 + dig2;
+
+    console.log(cpfGerado);
+
+    return cpfGerado === this.cpfLimpo;
+}
+
+ValidaCPF.prototype.criaDigito = function(cpfParcial) {
+    let cpfArr = Array.from(cpfParcial);
+    let inicial = cpfArr.length + 1;
+    let soma = cpfArr.reduce((acc, valor) => {
+        acc += (Number(valor) * inicial);
+        inicial--;
+        return acc;
+    },0);
+    let digito = 11 - (soma % 11);
+    if(digito > 9 ) {
+        digito = 0;
+    }
+    return String(digito);
+}
+
 
 button.addEventListener('click', () => {
-    const inputValue = document.querySelector('#input-display').value;
-    const cpfLimpo = inputValue.replace(/\D+/g, '');
-    const arrCpf = Array.from(cpfLimpo);
-    const cpfParcial = arrCpf.slice(0, 9);
+    let inputValue = document.querySelector('#input-display').value;
+    let cpf = new ValidaCPF(inputValue);
 
-    
-    const contaRes = (cpf) => {
-        let inicial = cpf.length + 1;
-        let res = cpf.reduce((acc, item) => {
-            acc += (Number(item) * inicial);
-            inicial--;
-            return acc;
-        }, 0)
-        return res;
-    }
-
-    const geraDigito = (contaRes) => {
-        const restoDiv = contaRes % 11;
-        let digito = 11 - restoDiv;
-        if (digito > 9) {
-            digito = 0;
-        }
-
-        return String(digito);
-    }
-
-    const arrCpfDigUm = cpfParcial;
-    arrCpfDigUm.push(geraDigito(contaRes(cpfParcial)));
-
-    const arrCpfDigDois = arrCpfDigUm;
-    arrCpfDigDois.push(geraDigito(contaRes(arrCpfDigUm)));
-
-    if(arrCpfDigDois[9] === arrCpf[9] && arrCpfDigDois[10] === arrCpf[10]) {
-        result.innerHTML = 'CPF Válido!'
+    if (cpf.valida()) {
+        result.innerHTML = 'CPF Válido!';
     } else {
-        result.innerHTML = 'CPF Inválido!'   
+        result.innerHTML = 'CPF Inválido!';
     }
 });
